@@ -30,11 +30,11 @@ $slack->on(message => sub {
 	    # HTML Escape strings
 	    	s/[“”]/\"/g;
 	    	s/[‘’]/\'/g;
-	    	s/&lt;/</g;
-            s/&gt;/>/g;
-            s/&quot;/\"/g;
-            s/&#39;/\'/g;
-            s/&amp;/&/g;
+			s/&lt;/</g;
+			s/&gt;/>/g;
+			s/&quot;/\"/g;
+			s/&#39;/\'/g;
+			s/&amp;/&/g;
         # Escape sequences
 	    	s/\\n/\n/g;
 	    	s/\\t/\t/g;
@@ -51,37 +51,38 @@ $slack->on(message => sub {
 	    #	s/\\U/\U/g; # Not support?
 	    #	s/\\E/\E/g; # Not support?
 	    #	Function current system
-	    	s/`.*`;//g;
-	    	s/system;//g;
-	    	s/system\(.*\);//g;
-	    	s/system\s+["'$@%\[{].*;//g;
-	    	s/exec;//g;
-	    	s/exec\(.*\);//g;
-	    	s/exec\s+["'$@%\[{].*;//g;
-	    	s/glob;//g;
-	    	s/glob\(.*\);//g;
-	    	s/glob\s+["'$@%\[{].*;//g;
-	    	s/chdir;//g;
-	    	s/chdir\(.*\);//g;
-	    	s/chdir\s+["'$@%\[{].*;//g;
-	    	s/unlink;//g;
-	    	s/unlink\(.*\);//g;
-	    	s/unlink\s+["'$@%\[{].*;//g;
-	    	s/rename;//g;
-	    	s/rename\(.*\);//g;
-	    	s/rename\s+["'$@%\[{].*;//g;
-	    	s/chmod\(.*\);//g;
-	    	s/chmod\s+\d+(\s+)?,(\s+)?["'$@%\[{].*;//g;
-	    	s/open\(.*\);//g;
-	    	s/open\s+([$@%].*|[A-Z]+)(\s+)?,(\s+)?["'$@%\[{].*;//g;
-	    	s/eval\(.*\);//g;
-	    	s/eval\s+["'$@%\[{].*;//g;
+	    	s/`.*`;?//g;
+	    	s/system;?//g;
+	    	s/system\(.*\);?//g;
+	    	s/system\s+["'$@%\[{].*;?//g;
+	    	s/exec;?//g;
+	    	s/exec\(.*\);?//g;
+	    	s/exec\s+["'$@%\[{].*;?//g;
+	    	s/glob;?//g;
+	    	s/glob\(.*\);?//g;
+	    	s/glob\s+["'$@%\[{].*;?//g;
+	    	s/chdir;?//g;
+	    	s/chdir\(.*\);?//g;
+	    	s/chdir\s+["'$@%\[{].*;?//g;
+	    	s/unlink;?//g;
+	    	s/unlink\(.*\);?//g;
+	    	s/unlink\s+["'$@%\[{].*;?//g;
+	    	s/rename;?//g;
+	    	s/rename\(.*\);?//g;
+	    	s/rename\s+["'$@%\[{].*;?//g;
+	    	s/chmod\(.*\);?//g;
+	    	s/chmod\s+\d+(\s+)?,(\s+)?["'$@%\[{].*;?//g;
+	    	s/open\(.*\);?//g;
+	    	s/open\s+([$@%].*|[A-Z]+)(\s+)?,(\s+)?["'$@%\[{].*;?//g;
+	    	s/eval\(.*\);?//g;
+	    	s/eval(\s+)?["'$@%\[{].*;?//g;
 
 	    # Module
-	    	s/use\s+File::.*;//g;
+	    	s/use\s+File::.*;?//g;
+	    	s/use\s+re(\s+)?[q'"(].*;?//g;
 
 	    # Variable
-	    	s/[$%@]ENV;//g;
+	    	s/[$%@]ENV;?//g;
 
 	    	$code .= $_;
 	    }
