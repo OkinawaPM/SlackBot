@@ -14,7 +14,7 @@ my $file = "../token";
 die "You must prepare TOKEN file first.\n" unless -f $file;
 
 my $emoji = ":camel:";
-my $token = path($file)->lines({chomp => 1});
+my ($token) = path($file)->lines({chomp => 1});
 
 my $bot = Bot->new(config => ".replyrc");
 
