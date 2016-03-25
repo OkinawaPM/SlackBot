@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use v5.10;
@@ -54,28 +55,28 @@ $slack->on(message => sub {
 	    	s/`.*`;?//g;
 	    	s/system;?//g;
 	    	s/system\(.*\);?//g;
-	    	s/system\s+["'$@%\[{].*;?//g;
+	    	s/system(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/exec;?//g;
 	    	s/exec\(.*\);?//g;
-	    	s/exec\s+["'$@%\[{].*;?//g;
+	    	s/exec(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/glob;?//g;
 	    	s/glob\(.*\);?//g;
-	    	s/glob\s+["'$@%\[{].*;?//g;
+	    	s/glob(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/chdir;?//g;
 	    	s/chdir\(.*\);?//g;
-	    	s/chdir\s+["'$@%\[{].*;?//g;
+	    	s/chdir(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/unlink;?//g;
 	    	s/unlink\(.*\);?//g;
-	    	s/unlink\s+["'$@%\[{].*;?//g;
+	    	s/unlink(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/rename;?//g;
 	    	s/rename\(.*\);?//g;
-	    	s/rename\s+["'$@%\[{].*;?//g;
+	    	s/rename(\+|\s+)["'$@%\[{].*;?//g;
 	    	s/chmod\(.*\);?//g;
-	    	s/chmod\s+\d+(\s+)?,(\s+)?["'$@%\[{].*;?//g;
+	    	s/chmod(\+|\s+)\d+(\s+)?,(\s+)?["'$@%\[{].*;?//g;
 	    	s/open\(.*\);?//g;
 	    	s/open\s+([$@%].*|[A-Z]+)(\s+)?,(\s+)?["'$@%\[{].*;?//g;
 	    	s/eval\(.*\);?//g;
-	    	s/eval(\s+)?["'$@%\[{].*;?//g;
+	    	s/eval(\+|\s+)?["'$@%\[{].*;?//g;
 
 	    # Module
 	    	s/use\s+File::.*;?//g;
