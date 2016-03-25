@@ -11,10 +11,11 @@ use Path::Tiny;
 use Bot;
 use Mojo::SlackRTM;
 
-die "You must prepare TOKEN file first.\n" unless -f "$FindBin::Bin/TOKEN";
+my $file = "../token";
+die "You must prepare TOKEN file first.\n" unless -f "$FindBin::Bin/".$file;
 
 my $emoji = ":camel:";
-my $token = path("$FindBin::Bin/../token")->lines({chomp => 1});
+my $token = path("$FindBin::Bin/".$file)->lines({chomp => 1});
 
 my $bot = Bot->new(config => ".replyrc");
 
