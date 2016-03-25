@@ -8,14 +8,14 @@ use lib "lib", "lib";
 use FindBin;
 use Path::Tiny;
 
-use Bot;
+use Bot
 use Mojo::SlackRTM;
 
 my $file = "../token";
-die "You must prepare TOKEN file first.\n" unless -f "$FindBin::Bin/".$file;
+die "You must prepare TOKEN file first.\n" unless -f $file;
 
 my $emoji = ":camel:";
-my $token = path("$FindBin::Bin/".$file)->lines({chomp => 1});
+my $token = path($file)->lines({chomp => 1});
 
 my $bot = Bot->new(config => ".replyrc");
 
