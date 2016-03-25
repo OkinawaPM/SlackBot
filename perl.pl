@@ -74,9 +74,14 @@ $slack->on(message => sub {
 	    	s/chmod\s+\d+(\s+)?,(\s+)?["'$@%\[{].*;//g;
 	    	s/open\(.*\);//g;
 	    	s/open\s+([$@%].*|[A-Z]+)(\s+)?,(\s+)?["'$@%\[{].*;//g;
+	    	s/eval\(.*\);//g;
+	    	s/eval\s+["'$@%\[{].*;//g;
 
 	    # Module
 	    	s/use\s+File::.*;//g;
+
+	    # Variable
+	    	s/[$%@]ENV;//g;
 
 	    	$code .= $_;
 	    }
