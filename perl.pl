@@ -5,12 +5,16 @@ use v5.10;
 
 use utf8;
 use lib "lib", "lib";
+use FindBin;
+use Path::Tiny;
 
 use Bot;
 use Mojo::SlackRTM;
 
+die "You must prepare TOKEN file first.\n" unless -f "$FindBin::Bin/TOKEN";
+
 my $emoji = ":camel:";
-my $token = ""; #slack token
+my $token = path("$FindBin::Bin/../token")->lines({chomp => 1});
 
 my $bot = Bot->new(config => ".replyrc");
 
