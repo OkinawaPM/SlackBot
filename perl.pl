@@ -5,10 +5,9 @@ use v5.10;
 
 use utf8;
 use lib "lib", "lib";
-use FindBin;
 use Path::Tiny;
 
-use Bot
+use Bot;
 use Mojo::SlackRTM;
 
 my $file = "../token";
