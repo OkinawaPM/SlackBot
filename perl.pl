@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -M-ops=:dangerous,:others,system,glob,:base_thread
 use strict;
 use warnings;
 use v5.10;
