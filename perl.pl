@@ -45,18 +45,18 @@ $slack->on(message => sub {
 			s/\\t/\t/g;
 			s/(.*)\\r//g;
 			s/\\f/\f/g;
-	    	s/(.)\\b//g;
-	    	s/\\a/\a/g;
-	    	s/\\e/\e/g;
-	    	s/\\x/\x/g;
-	    #	s/\\c/\c/g; # Not support?
-	    	s/\\l/\l/g;
-	    	s/\\u/\u/g;
-	    #	s/\\L/\L/g; # Not support?
-	    #	s/\\U/\U/g; # Not support?
-	    #	s/\\E/\E/g; # Not support?
+			s/(.)\\b//g;
+			s/\\a/\a/g;
+			s/\\e/\e/g;
+			s/\\x/\x/g;
+		#	s/\\c/\c/g; # Not support?
+			s/\\l/\l/g;
+			s/\\u/\u/g;
+		#	s/\\L/\L/g; # Not support?
+		#	s/\\U/\U/g; # Not support?
+		#	s/\\E/\E/g; # Not support?
 
-	    	$code .= $_;
+			$code .= $_;
 	    }
 	    # $slack->log->info($code);
 	    my $result = $bot->getResult($code, $emoji);
