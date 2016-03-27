@@ -72,9 +72,9 @@ sub getResult {
 	        kill 9, $$;
 	    };
 	    $self->setlimit;
-	    alerm($timeout);
+	    alarm($timeout);
 	    $reply->step($exec);
-	    alerm(0);
+	    alarm(0);
 	    exit;
 	}
 
