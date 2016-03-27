@@ -18,6 +18,7 @@ sub new {
 }
 
 sub setlimit {
+	my $limit = 1024 ** 2 * 4;
 	setrlimit(RLIMIT_DATA,  $limit, $limit) &&
 	setrlimit(RLIMIT_STACK, $limit, $limit) &&
 	setrlimit(RLIMIT_NPROC, 1, 1)           &&
