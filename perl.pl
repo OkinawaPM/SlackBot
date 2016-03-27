@@ -58,8 +58,9 @@ $slack->on(message => sub {
 
 			$code .= $_;
 	    }
-	    # $slack->log->info($code);
+	    $slack->log->info("Running code: $user_name");
 	    my $result = $bot->getResult($code, $emoji);
+	    $slack->log->info("Post");
 	    $slack->send_message($channel_id => $result);
     } elsif ($command =~ /help/) {
 	    $slack->send_message($channel_id => usage());
