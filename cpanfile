@@ -1,4 +1,3 @@
-requires 'BSD::Resource';
 requires 'Time::Moment';
 requires 'Scalar::Util';
 requires 'IO::Socket::SSL';
