@@ -1,55 +1,51 @@
-package Okinawa::SlackBot::Exec;
+package Okinawa::SlackBot::Plugin::Exec;
 
-use utf8;
-use Safe;
-use Mouse;
+use Okinawa::Base -base;
 
-use Mojo::Base 'Okinawa::SlackBot';
-
+use POSIX qw/SIGALRM/;
 use Reply;
-use Data::Printer;
+use DDP;
 use Okinawa::SlackBot::Util;
+use Safe;
+# class method
 
-has 'safe' => sub { Safe->new };
+# instance method
+sub exec {
+    my ($self, $source_code) = @_;
 
-sub eval {
-    my ($self, %params) = @_;
+    my $emoji = ":camel:";
 
-    my $exec = delete $params{source};
-    my $emoji = delete $params{emoji};
-
+    say STDERR "Execution: $source_code";
     # %param == (config => '.replyrc') の想定
-    my $reply = Reply->new(%params);
+    #my $reply = Reply->new(%params);
 
     my $pipe = make_pipe();
     my $result_pipe = make_pipe();
 
     my $pid = fork;
-    defined $pid or return 'fork failed';
+    defined $pid or return 'execution failed';
 
     my $timeout = 4;
 
     if ($pid) {
         close $result_pipe->{write};
         close $pipe->{read};
+        
         waitpid($pid, 0);
     } else {
-        local $SIG{ALRM} = sub {
-            print STDERR "Interrupting, taking more than $timeout seconds";
-            kill 9, $$;
-        };
         close $pipe->{write};
         close $result_pipe->{read};
 
         open STDIN, '<&', $pipe->{read};
         open STDOUT, '>&', $result_pipe->{write};
         open STDERR, '>&', $result_pipe->{write};
-        setlimit();
-        alarm($timeout);
-        $self->safe->reval(qq{$reply->step($exec)});
-        alarm(0);
+
+        my $result = timeout($timeout, $source_code);
+        
+        print STDERR $result unless $result =~ /^[01]$/;
         exit;
     }
+    say STDERR "execution finish";
 
     my $r = $result_pipe->{read};
 
@@ -65,11 +61,11 @@ sub eval {
     return $data;
 }
 
-around 'eval' => sub {
-    my ($orig, $self, %param) = @_;
+around 'exec' => sub {
+    my ($orig, $self, $source_code) = @_;
 
     my $code = "";
-    foreach my $line (@{$param{source}}) {
+    foreach my $line (@$source_code) {
     # HTML Escape strings
         $line =~ s/[“”]/\"/g;
         $line =~ s/[‘’]/\'/g;
@@ -97,9 +93,42 @@ around 'eval' => sub {
         $code .= $line;
     }
 
-    $param{source} = $code;
-
-    $self->$orig(%param);
+    $self->$orig($code);
 };
+
+sub timeout {
+    my ($sec, $exec) = @_;
+
+    local $SIG{__DIE__} = 'DEFAULT';
+    local $SIG{ALRM} = 'DEFAULT';
+
+    my $safe = Safe->new;
+    $safe->permit_only(qw/print :base_core :base_loop :base_mem :base_orig :base_math sort sleep alarm :load/);
+
+    my $error;
+    {
+        local $@;
+
+        $safe->reval(qq{
+            local \$SIG{ALRM} = sub { die "__TIMEOUT__\n" };
+            alarm $sec;
+            $exec
+            alarm 0;
+        });
+            
+        $error = $@;
+    }
+
+    if ($error) {
+        if ($error eq "__TIMEOUT__\n") {
+            print STDERR "Interrupting, taking more than $sec seconds";
+            return 1;
+        }
+        return $error;
+    }
+    return 0;
+}
+
+__PACKAGE__->meta->make_immutable();
 
 1;

@@ -216,6 +216,15 @@ DISTRIBUTIONS
       Mozilla::CA 0
       Net::SSLeay 1.46
       Scalar::Util 0
+  IO-Tty-1.12
+    pathname: T/TO/TODDR/IO-Tty-1.12.tar.gz
+    provides:
+      IO::Pty 1.12
+      IO::Tty 1.12
+      IO::Tty::Constant undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      Test::More 0
   Mac-SystemDirectory-0.06
     pathname: C/CH/CHANSEN/Mac-SystemDirectory-0.06.tar.gz
     provides:
@@ -350,6 +359,15 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  Mojo-IOLoop-ReadWriteFork-0.22
+    pathname: J/JH/JHTHORSEN/Mojo-IOLoop-ReadWriteFork-0.22.tar.gz
+    provides:
+      Mojo::IOLoop::ReadWriteFork 0.22
+    requirements:
+      ExtUtils::MakeMaker 0
+      IO::Pty 1.10
+      Mojolicious 4.30
+      Test::More 0.88
   Mojo-SlackRTM-0.02
     pathname: S/SK/SKAJI/Mojo-SlackRTM-0.02.tar.gz
     provides:
@@ -702,15 +720,6 @@ DISTRIBUTIONS
       Scalar::Util 0
       strict 0
       warnings 0
-  Sys-SigAction-0.22
-    pathname: L/LB/LBAXTER/Sys-SigAction-0.22.tar.gz
-    provides:
-      Sys::SigAction 0.22
-      Sys::SigAction::Alarm undef
-    requirements:
-      ExtUtils::MakeMaker 0
-      POSIX 0
-      Test::More 0
   Test-Fatal-0.014
     pathname: R/RJ/RJBS/Test-Fatal-0.014.tar.gz
     provides:
@@ -770,6 +779,17 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       constant 0
+      perl 5.006
+      strict 0
+      warnings 0
+  UNIVERSAL-require-0.18
+    pathname: N/NE/NEILB/UNIVERSAL-require-0.18.tar.gz
+    provides:
+      UNIVERSAL::require 0.18
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      Test::More 0.47
       perl 5.006
       strict 0
       warnings 0

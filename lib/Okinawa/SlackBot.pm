@@ -1,22 +1,20 @@
 package Okinawa::SlackBot;
 
-use Mojo::Base -base;
-
 use DDP;
 use Mojo::SlackRTM;
-use parent 'Mojo::SlackRTM';
+use Mojo::Base 'Mojo::SlackRTM';
 
-use Okinawa::SlackBot::Exec;
-use Okinawa::SlackBot::Help;
+use Okinawa::SlackBot::Plugin;
+use Mojo::IOLoop::ReadWriteFork;
 
 our $VERSION = "1.03";
 
-has 'exec'  => sub { Okinawa::SlackBot::Exec->new   };
-has 'usage' => sub { Okinawa::SlackBot::Help->usage };
+has 'plugin' => sub { Okinawa::SlackBot::Plugin->new->load };
 
 sub run {
     my ($self, %param) = @_;
     $self->log->info("Running...");
+
     $self->on(message => sub {
         my ($self, $event) = @_;
         my $channel_id = $event->{channel};
@@ -24,21 +22,35 @@ sub run {
         my $user_name  = $self->find_user_name($user_id);
         my $text       = $event->{text};
 
-        my $code_lines = [split /\n/, $text];
-        my $command = shift @$code_lines;
-        if ($command =~ /run/) {
+        my $args = [split /\n/, $text];
+        my $command = shift @$args;
+        my $method = (split /\s/, $command)[-1];
+        $self->log->info("Method: $method");
+
+        my $result = eval {
+            $self->plugin->can($method) ? $self->plugin->$method($args) : "Command Not Found";
+        };
+        $self->send_message($channel_id => $@ || $result);
+
+=pod
+        if ($method =~ /run/) {
             $self->log->info("Running code: $user_name");
-            my $result = $self->exec->eval(
-                source => $code_lines,
+
+            $self->send_message($channel_id => $self->exec->eval(
+                source => $args,
                 emoji  => ":camel:",
                 config => $param{config}
-            );
+            ));
+
             $self->log->info("Post");
-            $self->send_message($channel_id => $result);
-        } elsif ($command =~ /help/) {
+            
+        } elsif ($method =~ /help/) {
             $self->send_message($channel_id => $self->usage);
+        } elsif ($method =~ /echo/) {
+            $self->send_message($channel_id => $args);
         }
         $self->log->info($text);
+=cut
     });
 
     $self->start;
