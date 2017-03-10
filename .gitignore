@@ -31,3 +31,4 @@ MYMETA.*
 /Okinawa-SlackBot-*
 .DS_Store
 .carmel
+config/config.pl
