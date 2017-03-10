@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use utf8;
 use feature ();
-use FindBin;
+use Cwd 'getcwd';
 
-use Module::Load qw/autoload_remote/;
+use Module::Load 'autoload_remote';
 
 our @IMPORT = qw/Mouse/;
 our @EXPORT = qw/classpath/;
@@ -27,7 +27,7 @@ sub import {
         $flag = undef;
     }
 
-    my $caller = caller(0);
+    my $caller = caller;
 
     # Import other modules
     if ($flag) {
@@ -44,12 +44,18 @@ sub import {
     feature->import(':5.10');
 }
 
+=pod
+around 
+    run   => sub { ... },
+    error => sub { ... },
+    shout => sub { ... };
+=cut
 
 # subroutine
 sub classpath {
     my $package = shift;
-    my $class_path = join '/', split /::/, $package;
-    return "$FindBin::Bin/lib/$class_path";
+    my @class_path = split /::/, $package;
+    return File::Spec->catfile(getcwd, 'lib', @class_path);
 }
 
 1;

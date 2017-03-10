@@ -2,22 +2,27 @@ package Okinawa::SlackBot::Plugin;
 
 use Okinawa::Base -base;
 use Data::Dumper;
-extends 'Okinawa::SlackBot';
+
+has log => (
+    is => 'ro',
+    default => sub { Mojo::Log->new }
+);
 
 sub load {
     my $self = shift;
+    
     my $path = classpath(__PACKAGE__);
 
     # package list under "Plugin" directory
-    opendir(DH, $path) or die "Could not opendir: $!";
-    my @pm = grep { $_ !~ /^\.+$/ } readdir(DH);
-    closedir(DH);
+    opendir my $fh, $path or die "Could not opendir: $!";
+    my @pm = grep { $_ !~ /\A\.+\z/ } readdir $fh;
+    closedir $fh;
 
     # load plugins
-    eval {
-        for my $plugin (@pm) {
-            require "$path/$plugin";
-            $plugin =~ s/\.pm$//;
+    for my $plugin (@pm) {
+        eval {
+            require File::Spec->catfile($path, $plugin);
+            $plugin =~ s/\.pm\z//;
             my $method = lc $plugin;
             my $package = __PACKAGE__."::$plugin";
             $self->log->info("Load method: $package->$method");
@@ -25,11 +30,10 @@ sub load {
             # About "sub { $package->$method(pop @_) }"
             # @_ == ([0] => $class, [1] => $argument)
             # So remove first element "Okinawa::SlackBot::Plugin" class
-            $self->meta->add_method($method => sub { $package->$method(pop @_) });
-        }
-    };
-
-    $self->log->warn($@) if $@;
+            $self->meta->add_method($method => sub { $package->$method(@_[1..$#_]) });  
+        };
+        $self->log->warn($@) if $@;
+    }
 
     # Remove main class
     delete $self->meta->{methods}->{$_} for qw/new meta DESTROY/;

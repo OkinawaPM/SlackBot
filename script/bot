@@ -1,0 +1,15 @@
+#!perl
+
+use File::Spec;
+use Cwd 'getcwd';
+
+my $pwd = getcwd;
+push @INC, File::Spec->catfile($pwd, "lib");
+require Okinawa::SlackBot;
+
+my $config = do File::Spec->catfile($pwd, "config", "config.pl");
+my $bot = Okinawa::SlackBot->new(
+    name => $config->{name},
+    token => $config->{token}->{key}
+);
+$bot->run(config => File::Spec->catfile($pwd, ".replyrc"));
