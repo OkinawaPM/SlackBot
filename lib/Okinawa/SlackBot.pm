@@ -5,9 +5,7 @@ use Okinawa::Base -base;
 extends 'Mojo::SlackRTM';
 
 use Okinawa::SlackBot::Plugin;
-use Mojo::IOLoop::ReadWriteFork;
-
-our $VERSION = "1.03";
+use version; our $VERSION = version->declare('v0.1.3');
 
 has name => (
     is       => 'ro',
@@ -44,7 +42,7 @@ sub run {
     $self->on(message => sub {
         my ($self, $event) = @_;
 
-        # First, find bot id. because it use on the validation.
+        # First, find the bot id. because it use on the validation.
         my $text = $event->{text};
         return unless $self->validation($text);
 
@@ -61,33 +59,10 @@ sub run {
             $self->plugin->can($method) ? $self->plugin->$method($args) : 'Command Not Found';
         };
         $self->send_message($channel_id => $@ || $result);
-
-=pod
-        if ($method =~ /run/) {
-            $self->log->info("Running code: $user_name");
-
-            $self->send_message($channel_id => $self->exec->eval(
-                source => $args,
-                emoji  => ":camel:",
-                config => $param{config}
-            ));
-
-            $self->log->info("Post");
-            
-        } elsif ($method =~ /help/) {
-            $self->send_message($channel_id => $self->usage);
-        } elsif ($method =~ /echo/) {
-            $self->send_message($channel_id => $args);
-        }
-        $self->log->info($text);
-=cut
     });
 
     $self->start;
 }
-
-
-
 
 1;
 __END__

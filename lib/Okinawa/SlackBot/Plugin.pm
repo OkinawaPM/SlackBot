@@ -15,7 +15,7 @@ sub load {
 
     # package list under "Plugin" directory
     opendir my $fh, $path or die "Could not opendir: $!";
-    my @pm = grep { $_ !~ /\A\.+\z/ } readdir $fh;
+    my @pm = grep { $_ =~ /\A[a-zA-Z0-9]+\.pm\z/ } readdir $fh;
     closedir $fh;
 
     # load plugins
