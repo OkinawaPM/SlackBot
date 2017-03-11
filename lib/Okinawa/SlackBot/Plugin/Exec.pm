@@ -29,6 +29,7 @@ sub exec {
         local $SIG{ALRM} = sub {
             $timed_out = 1;
             kill 15, -$pid;
+            alarm 0;
         };
 
         alarm $timeout;
@@ -37,7 +38,7 @@ sub exec {
 
         alarm 0;
     } else {
-        POSIX::setpgid($$,$$);
+        POSIX::setpgid($$, $$);
         close $read;
 
         open STDOUT, '>&', $write;
@@ -46,17 +47,18 @@ sub exec {
         my ($error, $res);
         {
             local $@;
-            $res = $self->_execute_code($source_code) // '`undef`';
+            $res = $self->_execute_code($source_code) // 'undef';
             $error = $@;
         }
         
-        if ($timed_out) {
-            print "`Interrupting, taking more than $timeout seconds`";
-        } elsif ($error) {
+        if ($error) {
             print "Catching exception: `$error``";
         }
         print "\nresponse code: `$res`";
         exit;
+    }
+    if ($timed_out) {
+        return "Timeout: `Interrupting, taking more than $timeout seconds`";
     }
     say STDERR "execution finish";
 
