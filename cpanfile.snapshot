@@ -571,6 +571,20 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5
+  String-Random-0.29
+    pathname: S/SH/SHLOMIF/String-Random-0.29.tar.gz
+    provides:
+      String::Random 0.29
+    requirements:
+      Carp 0
+      Exporter 0
+      Module::Build 0.36
+      Test::More 0
+      parent 0
+      perl 5.006
+      strict 0
+      vars 0
+      warnings 0
   Sub-Exporter-0.987
     pathname: R/RJ/RJBS/Sub-Exporter-0.987.tar.gz
     provides:
