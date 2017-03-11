@@ -5,60 +5,62 @@ use Okinawa::Base -base;
 use POSIX qw/SIGALRM/;
 use Reply;
 use DDP;
-use Okinawa::SlackBot::Util;
 use Safe;
-# class method
+use POSIX;
+use Carp 'confess';
+use String::Random;
 
 # instance method
 sub exec {
     my ($self, $source_code) = @_;
 
-    my $emoji = ":camel:";
-
-    say STDERR "Execution: $source_code";
-    # %param == (config => '.replyrc') の想定
-    #my $reply = Reply->new(%params);
-
-    my $pipe = make_pipe();
-    my $result_pipe = make_pipe();
+    my $emoji = ':camel:';
+    pipe my ($read, $write);
 
     my $pid = fork;
-    defined $pid or return 'execution failed';
+    defined $pid or confess 'Could not fork()';
 
     my $timeout = 4;
 
+    my ($result, $timed_out);
     if ($pid) {
-        close $result_pipe->{write};
-        close $pipe->{read};
+        close $write;
+
+        local $SIG{ALRM} = sub {
+            $timed_out = 1;
+            kill 15, -$pid;
+        };
+
+        alarm $timeout;
         
-        waitpid($pid, 0);
+        wait;
+
+        alarm 0;
     } else {
-        close $pipe->{write};
-        close $result_pipe->{read};
+        POSIX::setpgid($$,$$);
+        close $read;
 
-        open STDIN, '<&', $pipe->{read};
-        open STDOUT, '>&', $result_pipe->{write};
-        open STDERR, '>&', $result_pipe->{write};
+        open STDOUT, '>&', $write;
+        open STDERR, '>&', STDOUT;
 
-        my $result = timeout($timeout, $source_code);
+        my ($error, $res);
+        {
+            local $@;
+            $res = $self->_execute_code($source_code) // '`undef`';
+            $error = $@;
+        }
         
-        print STDERR $result unless $result =~ /^[01]$/;
+        if ($timed_out) {
+            print "`Interrupting, taking more than $timeout seconds`";
+        } elsif ($error) {
+            print "Catching exception: `$error``";
+        }
+        print "\nresponse code: `$res`";
         exit;
     }
     say STDERR "execution finish";
 
-    my $r = $result_pipe->{read};
-
-    my $data = do { local $/; <$r> };
-
-    $data =~ s/\[\d+m//g;
-    $data =~ s/at reply input line (\d+)/at perl input line $1/g;
-
-    if ($data =~ s/\$res\[\d+\] = (.*)//g) {
-        return "```\n$data```\n${emoji} return $1";
-    }
-
-    return $data;
+    return do { local $/; <$read> };
 }
 
 around 'exec' => sub {
@@ -96,37 +98,27 @@ around 'exec' => sub {
     $self->$orig($code);
 };
 
-sub timeout {
-    my ($sec, $exec) = @_;
-
-    local $SIG{__DIE__} = 'DEFAULT';
-    local $SIG{ALRM} = 'DEFAULT';
-
+sub _execute_code {
+    my ($self, $code) = @_;
+    my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
+    # set limit
     my $safe = Safe->new;
-    $safe->permit_only(qw/print :base_core :base_loop :base_mem :base_orig :base_math sort sleep alarm :load/);
+    $safe->permit_only(qw/
+        print say eof :base_core :base_loop
+        :base_mem :base_orig :base_math
+        sort sleep :load
+    /);
+    my $res = $safe->reval(qq{
+        use strict;
+        use warnings;
+        use v5.10;
 
-    my $error;
-    {
-        local $@;
-
-        $safe->reval(qq{
-            local \$SIG{ALRM} = sub { die "__TIMEOUT__\n" };
-            alarm $sec;
-            $exec
-            alarm 0;
-        });
-            
-        $error = $@;
-    }
-
-    if ($error) {
-        if ($error eq "__TIMEOUT__\n") {
-            print STDERR "Interrupting, taking more than $sec seconds";
-            return 1;
+        sub $rand {
+            $code;
         }
-        return $error;
-    }
-    return 0;
+        $rand();
+    });
+    return $res;
 }
 
 __PACKAGE__->meta->make_immutable();
