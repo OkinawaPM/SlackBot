@@ -11,5 +11,4 @@ my $config = do File::Spec->catfile($pwd, "config", "config.pl");
 my $bot = Okinawa::SlackBot->new(
     name => $config->{name},
     token => $config->{token}->{key}
-);
-$bot->run(config => File::Spec->catfile($pwd, ".replyrc"));
+)->run;

@@ -1,6 +1,7 @@
 package Okinawa::SlackBot;
 
 use DDP;
+use Carp 'croak';
 use Okinawa::Base -base;
 extends 'Mojo::SlackRTM';
 
@@ -10,6 +11,12 @@ use version; our $VERSION = version->declare('v0.1.3');
 has name => (
     is       => 'ro',
     required => 1
+);
+
+has plugin => (
+    is       => 'ro',
+    lazy     => 1,
+    default  => sub { Okinawa::SlackBot::Plugin->new(name => shift->{name}) }
 );
 
 has id => (
@@ -22,22 +29,16 @@ has id => (
     }
 );
 
-has plugin => (
-    is       => 'ro',
-    lazy     => 1,
-    default  => sub {
-        Okinawa::SlackBot::Plugin->new->load
-    }
-);
-
 sub validation {
     my ($self, $text) = @_;
     return $text =~ /\A<@([0-9A-Z]+)> / ? $1 eq $self->id : 0;
 }
 
 sub run {
-    my ($self, %param) = @_;
+    my $self = shift;
     $self->log->info("Running...");
+ 
+    $self->plugin->load or croak "Failed to load plugins: $!\n";
 
     $self->on(message => sub {
         my ($self, $event) = @_;
@@ -56,7 +57,8 @@ sub run {
         $self->log->info("Method: $method");
 
         my $result = eval {
-            $self->plugin->can($method) ? $self->plugin->$method($args) : 'Command Not Found';
+            $self->plugin->can($method) ? $self->plugin->$method($args)
+                                        : $self->plugin->usage;
         };
         $self->send_message($channel_id => $@ || $result);
     });

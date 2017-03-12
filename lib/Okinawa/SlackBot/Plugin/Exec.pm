@@ -2,68 +2,18 @@ package Okinawa::SlackBot::Plugin::Exec;
 
 use Okinawa::Base -base;
 
-use POSIX qw/SIGALRM/;
-use Reply;
-use DDP;
+use Okinawa::SlackBot::Plugin;
+
+plugin exec =>
+    short 'Run your code using reply';
+
 use Safe;
 use POSIX;
-use Carp 'confess';
+use BSD::Resource;
 use String::Random;
+use Carp qw/croak confess/;
 
-# instance method
-sub exec {
-    my ($self, $source_code) = @_;
-
-    my $emoji = ':camel:';
-    pipe my ($read, $write);
-
-    my $pid = fork;
-    defined $pid or confess 'Could not fork()';
-
-    my $timeout = 4;
-
-    my ($result, $timed_out);
-    if ($pid) {
-        close $write;
-
-        local $SIG{ALRM} = sub {
-            $timed_out = 1;
-            kill 15, -$pid;
-            alarm 0;
-        };
-
-        alarm $timeout;
-        
-        wait;
-
-        alarm 0;
-    } else {
-        POSIX::setpgid($$, $$);
-        close $read;
-
-        open STDOUT, '>&', $write;
-        open STDERR, '>&', STDOUT;
-
-        my ($error, $res);
-        {
-            local $@;
-            $res = $self->_execute_code($source_code) // 'undef';
-            $error = $@;
-        }
-        
-        if ($error) {
-            print "Catching exception: `$error``";
-        }
-        print "\nresponse code: `$res`";
-        exit;
-    }
-    if ($timed_out) {
-        return "Timeout: `Interrupting, taking more than $timeout seconds`";
-    }
-    say STDERR "execution finish";
-
-    return do { local $/; <$read> };
-}
+use DDP;
 
 around 'exec' => sub {
     my ($orig, $self, $source_code) = @_;
@@ -100,6 +50,61 @@ around 'exec' => sub {
     $self->$orig($code);
 };
 
+# instance method
+sub exec {
+    my ($self, $source_code) = @_;
+
+    pipe my ($read, $write);
+
+    my $pid = fork;
+    defined $pid or croak 'Could not fork()';
+
+    my $timeout = 4;
+
+    my ($result, $timed_out);
+    if ($pid) {
+        close $write;
+
+        local $SIG{ALRM} = sub {
+            $timed_out = 1;
+            kill 15, -$pid;
+            alarm 0;
+        };
+
+        alarm $timeout;
+        
+        wait;
+
+        alarm 0;
+    } else {
+        POSIX::setpgid($$, $$);
+        _setrlimit();
+        close $read;
+
+        open STDOUT, '>&', $write;
+        open STDERR, '>&', STDOUT;
+
+        my ($error, $res);
+        {
+            local $@;
+            $res = $self->_execute_code($source_code) // 'undef';
+            $error = $@;
+        }
+        
+        if ($error) {
+            print "Catching exception: `$error``";
+        }
+        print "\nresponse code: `$res`";
+        exit;
+    }
+
+    if ($timed_out) {
+        return "Timeout: `Interrupting, taking more than $timeout seconds`";
+    }
+
+    return do { local $/; <$read> };
+}
+
 sub _execute_code {
     my ($self, $code) = @_;
     my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
@@ -124,5 +129,23 @@ sub _execute_code {
 }
 
 __PACKAGE__->meta->make_immutable();
+
+no Mouse;
+
+sub _setrlimit {
+    my $limit = 1024 ** 2 * 4;
+    setrlimit(RLIMIT_DATA,  $limit, $limit) or croak "Couldn't setrlimit: $!";
+    setrlimit(RLIMIT_STACK, $limit, $limit) or croak "Couldn't setrlimit: $!";
+    # setrlimit(RLIMIT_NPROC, 1, 1)          
+    setrlimit(RLIMIT_NOFILE, 10, 10)        or croak "Couldn't setrlimit: $!";  
+    setrlimit(RLIMIT_OFILE, 10, 10)         or croak "Couldn't setrlimit: $!";  
+    setrlimit(RLIMIT_OPEN_MAX, 10, 10)      or croak "Couldn't setrlimit: $!"; 
+    #setrlimit(RLIMIT_LOCKS, 1, 1)          
+    setrlimit(RLIMIT_AS,   $limit, $limit)  or croak "Couldn't setrlimit: $!";
+    setrlimit(RLIMIT_VMEM, $limit, $limit)  or croak "Couldn't setrlimit: $!";
+    setrlimit(RLIMIT_MEMLOCK, 100, 100)     or croak "Couldn't setrlimit: $!";
+    setrlimit(RLIMIT_CPU, 5, 10)            or croak "Couldn't setrlimit: $!";
+    setrlimit(RLIMIT_FSIZE, $limit, $limit) or croak "Couldn't setrlimit: $!";
+}
 
 1;
