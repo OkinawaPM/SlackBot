@@ -6,6 +6,13 @@ DISTRIBUTIONS
       BSD::Resource 1.2910
     requirements:
       ExtUtils::MakeMaker 0
+  Clone-0.38
+    pathname: G/GA/GARU/Clone-0.38.tar.gz
+    provides:
+      Clone 0.38
+    requirements:
+      ExtUtils::MakeMaker 0
+      Test::More 0
   Clone-PP-1.06
     pathname: N/NE/NEILB/Clone-PP-1.06.tar.gz
     provides:
@@ -73,6 +80,16 @@ DISTRIBUTIONS
       Term::ANSIColor 3
       Test::More 0.88
       version 0.77
+  Data-Structure-Util-0.16
+    pathname: A/AN/ANDYA/Data-Structure-Util-0.16.tar.gz
+    provides:
+      Data::Structure::Util 0.16
+    requirements:
+      Digest::MD5 0
+      ExtUtils::MakeMaker 0
+      Scalar::Util 1.01
+      Storable 0
+      perl 5.008
   Data-Util-0.65
     pathname: S/SY/SYOHEX/Data-Util-0.65.tar.gz
     provides:
@@ -182,6 +199,12 @@ DISTRIBUTIONS
       Mozilla::CA 0
       Net::SSLeay 1.46
       Scalar::Util 0
+  IO-String-1.08
+    pathname: G/GA/GAAS/IO-String-1.08.tar.gz
+    provides:
+      IO::String 1.08
+    requirements:
+      ExtUtils::MakeMaker 0
   IO-Tty-1.12
     pathname: T/TO/TODDR/IO-Tty-1.12.tar.gz
     provides:
