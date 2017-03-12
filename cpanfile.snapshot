@@ -80,35 +80,6 @@ DISTRIBUTIONS
       Term::ANSIColor 3
       Test::More 0.88
       version 0.77
-  Data-Structure-Util-0.16
-    pathname: A/AN/ANDYA/Data-Structure-Util-0.16.tar.gz
-    provides:
-      Data::Structure::Util 0.16
-    requirements:
-      Digest::MD5 0
-      ExtUtils::MakeMaker 0
-      Scalar::Util 1.01
-      Storable 0
-      perl 5.008
-  Data-Util-0.65
-    pathname: S/SY/SYOHEX/Data-Util-0.65.tar.gz
-    provides:
-      Data::Util 0.65
-      Data::Util::Error undef
-      Data::Util::PurePerl undef
-    requirements:
-      Devel::PPPort 3.19
-      ExtUtils::CBuilder 0
-      ExtUtils::MakeMaker 6.59
-      ExtUtils::ParseXS 3.18
-      Hash::Util::FieldHash::Compat 0
-      Module::Build 0.4005
-      Module::Build::XSUtil 0.16
-      Scope::Guard 0
-      Test::Exception 0.27
-      Test::More 0.62
-      XSLoader 0.02
-      perl 5.010
   Devel-Caller-2.06
     pathname: R/RC/RCLAMP/Devel-Caller-2.06.tar.gz
     provides:
@@ -199,12 +170,6 @@ DISTRIBUTIONS
       Mozilla::CA 0
       Net::SSLeay 1.46
       Scalar::Util 0
-  IO-String-1.08
-    pathname: G/GA/GAAS/IO-String-1.08.tar.gz
-    provides:
-      IO::String 1.08
-    requirements:
-      ExtUtils::MakeMaker 0
   IO-Tty-1.12
     pathname: T/TO/TODDR/IO-Tty-1.12.tar.gz
     provides:
