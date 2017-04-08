@@ -1,7 +1,6 @@
 package Okinawa::SlackBot::Plugin::Exec;
 
 use Okinawa::Base -base;
-
 use Okinawa::SlackBot::Plugin;
 
 plugin exec =>
@@ -92,7 +91,8 @@ sub exec {
         }
         
         if ($error) {
-            print "Catching exception: `$error``";
+            chomp $error;
+            print "Catching exception: `$error`";
         }
         print "\nresponse code: `$res`";
         exit;
