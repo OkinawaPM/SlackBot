@@ -32,3 +32,4 @@ MYMETA.*
 .DS_Store
 .carmel
 config/config.pl
+.vstags
