@@ -8,6 +8,7 @@ requires 'BSD::Resource';
 requires 'String::Random';
 requires 'Module::Load';
 requires 'Clone';
+requires 'Plack';
 
 on 'test' => sub {
     requires 'Test::More';
