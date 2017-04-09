@@ -3,12 +3,7 @@
 use File::Spec;
 use Cwd 'getcwd';
 
-my $pwd = getcwd;
-push @INC, File::Spec->catfile($pwd, "lib");
+BEGIN { unshift @INC, File::Spec->catfile(getcwd, "lib") }
 require Okinawa::SlackBot;
 
-my $config = do File::Spec->catfile($pwd, "config", "config.pl");
-my $bot = Okinawa::SlackBot->new(
-    name => $config->{name},
-    token => $config->{token}->{key}
-)->run;
+Okinawa::SlackBot->new(name => $ENV{SLACK_TOKEN}, token => $ENV{BOT_NAME})->run;
