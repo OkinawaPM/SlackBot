@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/OkinawaPM/SlackBot.svg?branch=master)](https://travis-ci.org/OkinawaPM/SlackBot)
 # NAME
 
 Okinawa::SlackBot - for Okinawa.pm slack
