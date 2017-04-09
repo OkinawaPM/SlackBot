@@ -1,5 +1,7 @@
 package Okinawa::SlackBot::Plugin;
 
+use Mojo::Log;
+use File::Spec;
 use Carp 'croak';
 use Clone 'clone';
 
@@ -20,16 +22,22 @@ has log => (
     default => sub { Mojo::Log->new },
 );
 
+sub find_pm {
+    my ($self, $path) = @_;
+     # package list under the "Plugin" directory
+    opendir my $fh, $path or croak "Could not opendir: $!";
+    my @pmfiles = grep { $_ =~ /\A[A-Z][a-z]+\.pm\z/ } readdir $fh;
+    closedir $fh;
+
+    return @pmfiles;
+}
+
 sub load {
     my $self = shift;
 
     my $this = __PACKAGE__;
     my $path = classpath($this);
-
-    # package list under the "Plugin" directory
-    opendir my $fh, $path or croak "Could not opendir: $!";
-    my @pmfiles = grep { $_ =~ /\A[A-Z][a-z]+\.pm\z/ } readdir $fh;
-    closedir $fh;
+    my @pmfiles = $self->find_pm($path);
 
     my $obj = clone $self; # deep copy
 
@@ -51,10 +59,7 @@ sub load {
             }
         };
         $self->log->warn("Failed to load method: ".$@) if $@;
-
     }
-    # Remove from main class
-    delete $self->meta->{methods}->{$_} for qw/new meta DESTROY/;
 
     return $self;
 }
@@ -67,7 +72,7 @@ sub usage {
         select $buf;
 
         say "Usage: \@".$self->name." COMMAND";
-        for my $pkg (keys %$plugins) {
+        for my $pkg (sort { $a cmp $b } keys %$plugins) {
             say "-- ".$plugins->{$pkg}{run};
             say "    ".$plugins->{$pkg}{short};
         }

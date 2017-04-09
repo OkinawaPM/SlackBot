@@ -3,8 +3,7 @@ package Okinawa::SlackBot::Plugin::Exec;
 use Okinawa::Base -base;
 use Okinawa::SlackBot::Plugin;
 
-plugin exec =>
-    short 'Run your code using reply';
+plugin exec => short 'Run your code using reply';
 
 use Safe;
 use POSIX;

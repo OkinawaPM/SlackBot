@@ -15,7 +15,10 @@ has name => (
 has plugin => (
     is       => 'ro',
     lazy     => 1,
-    default  => sub { Okinawa::SlackBot::Plugin->new(name => shift->{name}) }
+    default  => sub {
+        Okinawa::SlackBot::Plugin->new(name => shift->{name})->load
+        or croak "Failed to load plugins: $!\n";
+    }
 );
 
 has id => (
@@ -36,8 +39,6 @@ sub validation {
 sub run {
     my $self = shift;
     $self->log->info("Running...");
- 
-    $self->plugin->load or croak "Failed to load plugins: $!\n";
 
     $self->on(message => sub {
         my ($self, $event) = @_;
@@ -52,8 +53,12 @@ sub run {
         my $args       = [split /\n/, $text];
         my $command    = shift @$args;
         my $method     = (split /\s/, $command)[-1];
+        if ($method =~ /\A(?:new|meta|DESTROY)\z/) {
+            $self->log->warn("Cannot invoke $method");
+            return;
+        }
         $self->log->info("Method: $method");
-
+        
         my $result = eval {
             $self->plugin->can($method) ? $self->plugin->$method($args)
                                         : $self->plugin->usage;
