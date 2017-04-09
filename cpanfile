@@ -6,6 +6,7 @@ requires 'Data::Printer';
 requires 'Mojo::SlackRTM';
 requires 'BSD::Resource';
 requires 'String::Random';
+requires 'Module::Load';
 requires 'Clone';
 
 on 'test' => sub {
