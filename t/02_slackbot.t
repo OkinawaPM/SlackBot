@@ -1,10 +1,6 @@
 use Test::More;
 use Test::MockObject::Extends;
 
-use File::Spec;
-use Cwd 'getcwd';
-BEGIN { unshift @INC, File::Spec->catfile(getcwd, "lib") }
-
 use Okinawa::SlackBot;
 my $bot = Okinawa::SlackBot->new(name => 'bot_name', token => 'token');
 my $bot_mocked = Test::MockObject::Extends->new($bot);

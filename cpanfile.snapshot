@@ -24,39 +24,6 @@ DISTRIBUTIONS
       strict 0
       vars 0
       warnings 0
-  Config-INI-0.025
-    pathname: R/RJ/RJBS/Config-INI-0.025.tar.gz
-    provides:
-      Config::INI 0.025
-      Config::INI::Reader 0.025
-      Config::INI::Writer 0.025
-    requirements:
-      Carp 0
-      ExtUtils::MakeMaker 0
-      Mixin::Linewise::Readers 0.105
-      Mixin::Linewise::Writers 0
-      strict 0
-      warnings 0
-  Config-INI-Reader-Ordered-0.020
-    pathname: R/RJ/RJBS/Config-INI-Reader-Ordered-0.020.tar.gz
-    provides:
-      Config::INI::Reader::Ordered 0.020
-    requirements:
-      Config::INI::Reader 0
-      ExtUtils::MakeMaker 0
-      strict 0
-      vars 0
-  Data-OptList-0.110
-    pathname: R/RJ/RJBS/Data-OptList-0.110.tar.gz
-    provides:
-      Data::OptList 0.110
-    requirements:
-      ExtUtils::MakeMaker 0
-      List::Util 0
-      Params::Util 0
-      Sub::Install 0.921
-      strict 0
-      warnings 0
   Data-Printer-0.38
     pathname: G/GA/GARU/Data-Printer-0.38.tar.gz
     provides:
@@ -80,22 +47,6 @@ DISTRIBUTIONS
       Term::ANSIColor 3
       Test::More 0.88
       version 0.77
-  Devel-Caller-2.06
-    pathname: R/RC/RCLAMP/Devel-Caller-2.06.tar.gz
-    provides:
-      Devel::Caller 2.06
-    requirements:
-      ExtUtils::MakeMaker 0
-      PadWalker 0.08
-      Test::More 0
-  Devel-LexAlias-0.05
-    pathname: R/RC/RCLAMP/Devel-LexAlias-0.05.tar.gz
-    provides:
-      Devel::LexAlias 0.05
-    requirements:
-      Devel::Caller 0.03
-      ExtUtils::MakeMaker 0
-      Test::More 0
   Dist-CheckConflicts-0.11
     pathname: D/DO/DOY/Dist-CheckConflicts-0.11.tar.gz
     provides:
@@ -106,19 +57,6 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.30
       Module::Runtime 0.009
       base 0
-      strict 0
-      warnings 0
-  Eval-Closure-0.14
-    pathname: D/DO/DOY/Eval-Closure-0.14.tar.gz
-    provides:
-      Eval::Closure 0.14
-    requirements:
-      Carp 0
-      Exporter 0
-      ExtUtils::MakeMaker 0
-      Scalar::Util 0
-      constant 0
-      overload 0
       strict 0
       warnings 0
   File-HomeDir-1.00
@@ -170,15 +108,6 @@ DISTRIBUTIONS
       Mozilla::CA 0
       Net::SSLeay 1.46
       Scalar::Util 0
-  IO-Tty-1.12
-    pathname: T/TO/TODDR/IO-Tty-1.12.tar.gz
-    provides:
-      IO::Pty 1.12
-      IO::Tty 1.12
-      IO::Tty::Constant undef
-    requirements:
-      ExtUtils::MakeMaker 0
-      Test::More 0
   Mac-SystemDirectory-0.06
     pathname: C/CH/CHANSEN/Mac-SystemDirectory-0.06.tar.gz
     provides:
@@ -187,21 +116,6 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.42
       Test::More 0.86
       perl 5.006
-  Mixin-Linewise-0.108
-    pathname: R/RJ/RJBS/Mixin-Linewise-0.108.tar.gz
-    provides:
-      Mixin::Linewise 0.108
-      Mixin::Linewise::Readers 0.108
-      Mixin::Linewise::Writers 0.108
-    requirements:
-      Carp 0
-      ExtUtils::MakeMaker 0
-      IO::File 0
-      PerlIO::utf8_strict 0
-      Sub::Exporter 0
-      perl 5.008001
-      strict 0
-      warnings 0
   Module-Implementation-0.09
     pathname: D/DR/DROLSKY/Module-Implementation-0.09.tar.gz
     provides:
@@ -223,15 +137,6 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  Mojo-IOLoop-ReadWriteFork-0.22
-    pathname: J/JH/JHTHORSEN/Mojo-IOLoop-ReadWriteFork-0.22.tar.gz
-    provides:
-      Mojo::IOLoop::ReadWriteFork 0.22
-    requirements:
-      ExtUtils::MakeMaker 0
-      IO::Pty 1.10
-      Mojolicious 4.30
-      Test::More 0.88
   Mojo-SlackRTM-0.02
     pathname: S/SK/SKAJI/Mojo-SlackRTM-0.02.tar.gz
     provides:
@@ -444,114 +349,6 @@ DISTRIBUTIONS
       XSLoader 0
       strict 0
       warnings 0
-  PadWalker-2.2
-    pathname: R/RO/ROBIN/PadWalker-2.2.tar.gz
-    provides:
-      PadWalker 2.2
-    requirements:
-      ExtUtils::MakeMaker 0
-      perl 5.008001
-  Params-Util-1.07
-    pathname: A/AD/ADAMK/Params-Util-1.07.tar.gz
-    provides:
-      Params::Util 1.07
-    requirements:
-      ExtUtils::CBuilder 0.27
-      ExtUtils::MakeMaker 6.52
-      File::Spec 0.80
-      Scalar::Util 1.18
-      Test::More 0.42
-      perl 5.00503
-  Path-Tiny-0.096
-    pathname: D/DA/DAGOLDEN/Path-Tiny-0.096.tar.gz
-    provides:
-      Path::Tiny 0.096
-      Path::Tiny::Error 0.096
-    requirements:
-      Carp 0
-      Cwd 0
-      Digest 1.03
-      Digest::SHA 5.45
-      Exporter 5.57
-      ExtUtils::MakeMaker 6.17
-      Fcntl 0
-      File::Copy 0
-      File::Glob 0
-      File::Path 2.07
-      File::Spec 0.86
-      File::Temp 0.19
-      File::stat 0
-      constant 0
-      if 0
-      overload 0
-      perl 5.008001
-      strict 0
-      warnings 0
-  PerlIO-utf8_strict-0.006
-    pathname: L/LE/LEONT/PerlIO-utf8_strict-0.006.tar.gz
-    provides:
-      PerlIO::utf8_strict 0.006
-    requirements:
-      ExtUtils::MakeMaker 0
-      XSLoader 0
-      perl 5.008
-      strict 0
-      warnings 0
-  Reply-0.42
-    pathname: D/DO/DOY/Reply-0.42.tar.gz
-    provides:
-      Reply 0.42
-      Reply::App 0.42
-      Reply::Config 0.42
-      Reply::Plugin 0.42
-      Reply::Plugin::AutoRefresh 0.42
-      Reply::Plugin::Autocomplete::Commands 0.42
-      Reply::Plugin::Autocomplete::Functions 0.42
-      Reply::Plugin::Autocomplete::Globals 0.42
-      Reply::Plugin::Autocomplete::Keywords 0.42
-      Reply::Plugin::Autocomplete::Lexicals 0.42
-      Reply::Plugin::Autocomplete::Methods 0.42
-      Reply::Plugin::Autocomplete::Packages 0.42
-      Reply::Plugin::CollapseStack 0.42
-      Reply::Plugin::Colors 0.42
-      Reply::Plugin::DataDump 0.42
-      Reply::Plugin::DataDumper 0.42
-      Reply::Plugin::DataPrinter 0.42
-      Reply::Plugin::Editor 0.42
-      Reply::Plugin::FancyPrompt 0.42
-      Reply::Plugin::Hints 0.42
-      Reply::Plugin::Interrupt 0.42
-      Reply::Plugin::LexicalPersistence 0.42
-      Reply::Plugin::LoadClass 0.42
-      Reply::Plugin::Nopaste 0.42
-      Reply::Plugin::Packages 0.42
-      Reply::Plugin::Pager 0.42
-      Reply::Plugin::ReadLine 0.42
-      Reply::Plugin::ResultCache 0.42
-      Reply::Plugin::Timer 0.42
-    requirements:
-      Config::INI::Reader::Ordered 0
-      Data::Dumper 0
-      Devel::LexAlias 0
-      Eval::Closure 0.11
-      Exporter 0
-      ExtUtils::MakeMaker 0
-      File::HomeDir 0
-      File::Spec 0
-      Getopt::Long 2.36
-      Module::Runtime 0
-      Package::Stash 0
-      PadWalker 0
-      Scalar::Util 0
-      Term::ANSIColor 0
-      Term::ReadLine 0
-      Time::HiRes 0
-      Try::Tiny 0
-      base 0
-      overload 0
-      perl 5.006
-      strict 0
-      warnings 0
   Sort-Naturally-1.03
     pathname: B/BI/BINGOS/Sort-Naturally-1.03.tar.gz
     provides:
@@ -572,30 +369,6 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       vars 0
-      warnings 0
-  Sub-Exporter-0.987
-    pathname: R/RJ/RJBS/Sub-Exporter-0.987.tar.gz
-    provides:
-      Sub::Exporter 0.987
-      Sub::Exporter::Util 0.987
-    requirements:
-      Carp 0
-      Data::OptList 0.100
-      ExtUtils::MakeMaker 6.30
-      Params::Util 0.14
-      Sub::Install 0.92
-      strict 0
-      warnings 0
-  Sub-Install-0.928
-    pathname: R/RJ/RJBS/Sub-Install-0.928.tar.gz
-    provides:
-      Sub::Install 0.928
-    requirements:
-      B 0
-      Carp 0
-      ExtUtils::MakeMaker 6.30
-      Scalar::Util 0
-      strict 0
       warnings 0
   Test-MockObject-1.20161202
     pathname: C/CH/CHROMATIC/Test-MockObject-1.20161202.tar.gz

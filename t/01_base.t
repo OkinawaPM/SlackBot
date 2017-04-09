@@ -2,7 +2,6 @@ use Test::More;
 
 use File::Spec;
 use Cwd 'getcwd';
-BEGIN { unshift @INC, File::Spec->catfile(getcwd, "lib") }
 use Okinawa::Base -default;
 
 package Okinawa::BaseTest {

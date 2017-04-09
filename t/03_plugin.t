@@ -4,7 +4,6 @@ use Test::MockObject::Extends;
 use File::Spec;
 use Cwd 'getcwd';
 BEGIN {
-    unshift @INC, File::Spec->catfile(getcwd, "lib");
     my $foo = <<"FOO";
 package Okinawa::SlackBot::Plugin::Foo;
 use Okinawa::SlackBot::Plugin;
