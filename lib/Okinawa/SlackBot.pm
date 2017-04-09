@@ -1,6 +1,5 @@
 package Okinawa::SlackBot;
 
-use DDP;
 use Carp 'croak';
 use Okinawa::Base -base;
 extends 'Mojo::SlackRTM';
@@ -50,7 +49,6 @@ sub run {
         my $channel_id = $event->{channel};
         my $user_id    = $event->{user};
         my $user_name  = $self->find_user_name($user_id);
-
         my $args       = [split /\n/, $text];
         my $command    = shift @$args;
         my $method     = (split /\s/, $command)[-1];
@@ -67,32 +65,3 @@ sub run {
 }
 
 1;
-__END__
-
-=encoding utf-8
-
-=head1 NAME
-
-Okinawa::SlackBot - It's new $module
-
-=head1 SYNOPSIS
-
-    use Okinawa::SlackBot;
-
-=head1 DESCRIPTION
-
-Okinawa::SlackBot is ...
-
-=head1 LICENSE
-
-Copyright (C) Code-Hex.
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=head1 AUTHOR
-
-Code-Hex E<lt>x00.x7f@gmail.comE<gt>
-
-=cut
-

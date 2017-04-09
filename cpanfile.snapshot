@@ -597,6 +597,22 @@ DISTRIBUTIONS
       Scalar::Util 0
       strict 0
       warnings 0
+  Test-MockObject-1.20161202
+    pathname: C/CH/CHROMATIC/Test-MockObject-1.20161202.tar.gz
+    provides:
+      Test::MockObject 1.20161202
+      Test::MockObject::Extends 1.20161202
+    requirements:
+      Carp 0
+      Devel::Peek 0
+      ExtUtils::MakeMaker 0
+      Scalar::Util 0
+      Test::Builder 0
+      UNIVERSAL::can 1.20110617
+      UNIVERSAL::isa 1.20110614
+      constant 0
+      strict 0
+      warnings 0
   Time-Moment-0.38
     pathname: C/CH/CHANSEN/Time-Moment-0.38.tar.gz
     provides:
@@ -625,3 +641,25 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  UNIVERSAL-can-1.20140328
+    pathname: C/CH/CHROMATIC/UNIVERSAL-can-1.20140328.tar.gz
+    provides:
+      UNIVERSAL::can 1.20140328
+    requirements:
+      ExtUtils::MakeMaker 6.30
+      Scalar::Util 0
+      strict 0
+      vars 0
+      warnings 0
+      warnings::register 0
+  UNIVERSAL-isa-1.20150614
+    pathname: E/ET/ETHER/UNIVERSAL-isa-1.20150614.tar.gz
+    provides:
+      UNIVERSAL::isa 1.20150614
+    requirements:
+      ExtUtils::MakeMaker 0
+      Scalar::Util 0
+      perl 5.006002
+      strict 0
+      warnings 0
+      warnings::register 0

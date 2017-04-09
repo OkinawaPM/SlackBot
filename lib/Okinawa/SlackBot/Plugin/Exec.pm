@@ -12,8 +12,6 @@ use BSD::Resource;
 use String::Random;
 use Carp qw/croak confess/;
 
-use DDP;
-
 around 'exec' => sub {
     my ($orig, $self, $source_code) = @_;
 

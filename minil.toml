@@ -1,4 +1,0 @@
-name = "Okinawa-SlackBot"
-# badges = ["travis"]
-module_maker="ModuleBuildTiny"
-

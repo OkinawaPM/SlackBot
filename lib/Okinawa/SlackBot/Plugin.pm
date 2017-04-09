@@ -31,7 +31,7 @@ sub load {
     my @pmfiles = grep { $_ =~ /\A[A-Z][a-z]+\.pm\z/ } readdir $fh;
     closedir $fh;
 
-    my $obj = clone $self;
+    my $obj = clone $self; # deep copy
 
     # load plugins
     for my $pm (@pmfiles) {
@@ -41,9 +41,8 @@ sub load {
             if ($plugins->{$pkg}) {
                 my $method  = $plugins->{$pkg}{run};
                 $self->log->info("Load plugin: $pkg->$method");
-
-                # About "sub { $package->$method(pop @_) }"
-                # @_ == ([0] => $class, [1] => $argument)
+                # About "sub { bless($obj, $pkg)->$method(@_[1..$#_]) }"
+                # @_ == ([0] => $class, [1..$#_] => $argument)
                 # So remove first element "Okinawa::SlackBot::Plugin" class name
                 $self->meta->add_method($method => sub {
                     my $new = bless $obj, $pkg;
@@ -54,7 +53,7 @@ sub load {
         $self->log->warn("Failed to load method: ".$@) if $@;
 
     }
-    # Remove main class
+    # Remove from main class
     delete $self->meta->{methods}->{$_} for qw/new meta DESTROY/;
 
     return $self;

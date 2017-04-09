@@ -1,14 +1,38 @@
 # NAME
 
-Okinawa::SlackBot - It's new $module
+Okinawa::SlackBot - for Okinawa.pm slack
 
-# SYNOPSIS
+# USAGE
+## 1. Setup `config.pl` in the `config` directory
+```perl
++{
+    name  => "perl", # bot name
+    token => {
+        key => "xoxb-289251..."
+    }
+};
 
-    use Okinawa::SlackBot;
+```
+## 2. Install modules and run
 
-# DESCRIPTION
+Case the [Carton](https://github.com/perl-carton/carton)
 
-Okinawa::SlackBot is ...
+    carton install
+    carton exec -- ./script/bot
+
+Case the [Carmel](https://github.com/miyagawa/Carmel)
+
+    carmel install
+    carmel exec -- ./script/bot
+
+## 3. Run tests
+Case the [Carton](https://github.com/perl-carton/carton)
+
+    carton exec -- prove
+
+Case the [Carmel](https://github.com/miyagawa/Carmel)
+
+    carmel exec -- prove
 
 # LICENSE
 
