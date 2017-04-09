@@ -6,4 +6,4 @@ use Cwd 'getcwd';
 BEGIN { unshift @INC, File::Spec->catfile(getcwd, "lib") }
 require Okinawa::SlackBot;
 
-Okinawa::SlackBot->new(name => $ENV{SLACK_TOKEN}, token => $ENV{BOT_NAME})->run;
+Okinawa::SlackBot->new(name => $ENV{BOT_NAME}, token => $ENV{SLACK_TOKEN})->run;
