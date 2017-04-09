@@ -8,3 +8,8 @@ install:
   - (cpanm --installdeps --with-develop -nq .) || cat ~/.cpanm/build.log
 script:
   - prove -l
+deploy:
+  provider: heroku
+  api_key:
+    secure:$HEROKU_API_KEY
+  app: okinawapm-slackbot
