@@ -55,8 +55,15 @@ post '/invite' => sub {
 BEGIN { unshift @INC, File::Spec->catfile(getcwd, 'lib') }
 require Okinawa::SlackBot;
 
-my $proclet = Proclet->new(color => 1);
+my $proclet = Proclet->new;
 my $slackbot = Okinawa::SlackBot->new(name => $ENV{BOT_NAME}, token => $ENV{SLACK_TOKEN});
+
+my $pid = fork;
+defined $pid or die 'Could not fork()';
+unless ($pid) {
+    $slackbot->run;
+    exit;
+}
 
 $proclet->service(
     code   => sub {
@@ -67,14 +74,6 @@ $proclet->service(
     worker => 1,
     every  => '*/15 0-16,23 * * *',
     tag    => 'Cron request',
-);
-
-$proclet->service(
-    code   => sub {
-        $slackbot->run;
-    },
-    worker => 1,
-    tag    => 'SlackBot'
 );
 
 $proclet->service(
