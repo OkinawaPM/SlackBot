@@ -1,14 +1,14 @@
-requires 'Time::Moment';
-requires 'IO::Socket::SSL';
-requires 'Mojolicious';
 requires 'Mouse';
+requires 'Clone';
+requires 'Proclet';
+requires 'Mojolicious';
+requires 'IO::Socket::SSL';
 requires 'Data::Printer';
 requires 'Mojo::SlackRTM';
 requires 'BSD::Resource';
 requires 'String::Random';
 requires 'Module::Load';
-requires 'Clone';
-requires 'Plack';
+requires 'Email::Valid';
 
 on 'test' => sub {
     requires 'Test::More';
