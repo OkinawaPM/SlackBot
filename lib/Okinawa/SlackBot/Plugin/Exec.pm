@@ -130,18 +130,8 @@ __PACKAGE__->meta->make_immutable();
 no Mouse;
 
 sub _setrlimit {
-    my $limit = 1024 ** 2 * 4;
-    setrlimit(RLIMIT_DATA,  $limit, $limit) or croak "Couldn't setrlimit: $!";
-    setrlimit(RLIMIT_STACK, $limit, $limit) or croak "Couldn't setrlimit: $!";
-    # setrlimit(RLIMIT_NPROC, 1, 1)          
-    setrlimit(RLIMIT_NOFILE, 10, 10)        or croak "Couldn't setrlimit: $!";  
-    setrlimit(RLIMIT_OFILE, 10, 10)         or croak "Couldn't setrlimit: $!";  
-    setrlimit(RLIMIT_OPEN_MAX, 10, 10)      or croak "Couldn't setrlimit: $!"; 
-    #setrlimit(RLIMIT_LOCKS, 1, 1)          
-    setrlimit(RLIMIT_AS,   $limit, $limit)  or croak "Couldn't setrlimit: $!";
-    setrlimit(RLIMIT_VMEM, $limit, $limit)  or croak "Couldn't setrlimit: $!";
-    setrlimit(RLIMIT_MEMLOCK, 100, 100)     or croak "Couldn't setrlimit: $!";
-    setrlimit(RLIMIT_CPU, 5, 10)            or croak "Couldn't setrlimit: $!";
+    my $limit = 1024 ** 2 * 15;
+    setrlimit(RLIMIT_CPU, 25, 30)           or croak "Couldn't setrlimit: $!";
     setrlimit(RLIMIT_FSIZE, $limit, $limit) or croak "Couldn't setrlimit: $!";
 }
 
