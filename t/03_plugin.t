@@ -76,7 +76,7 @@ Usage: \@$botname COMMAND
 -- bar
     Bar description
 -- exec
-    Run your code using reply
+    Run your code using Safe->reval
 -- foo
     Foo description
 -- codehex
