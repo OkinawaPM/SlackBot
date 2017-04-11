@@ -89,7 +89,7 @@ sub exec {
         
         if ($error) {
             chomp $error;
-            print "Catching exception: `$error`";
+            print "Catching exception:\n```$error```";
         }
         print "\nresponse code: `$res`";
         exit;
@@ -113,10 +113,9 @@ sub _execute_code {
         sort sleep :load
     /);
     my $res = $safe->reval(qq{
-        use strict;
-        use warnings;
-        use v5.10;
-
+        use Mojo::Base -base;
+        use Encode;
+        
         sub $rand {
             $code;
         }
