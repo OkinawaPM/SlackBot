@@ -16,6 +16,50 @@ use BSD::Resource;
 use String::Random;
 use Carp qw/croak confess/;
 
+# module load in reval
+use Encode;
+use Data::Dumper;
+
+use Scalar::Util qw(
+    blessed refaddr reftype weaken unweaken isweak
+    readonly set_prototype dualvar isdual isvstring
+    looks_like_number openhandle tainted
+);
+
+has safe => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        my $safe = Safe->new;
+        $safe->permit_only(qw/
+            print say eof :base_core :base_loop
+            :base_mem :base_orig :base_math
+            sort sleep :load utime ftatime ftctime time tms
+            read :filesys_read pack unpack
+        /);
+        $safe->share_from('main', [qw/
+            Internals::SvREADONLY
+            mro::method_changed_in
+            mro::get_linear_isa
+            mro::get_pkg_gen mro::set_mro
+            mro::method_changed_in mro::get_mro
+            mro::invalidate_all_method_caches
+            mro::is_universal mro::get_isarev
+
+            Dumper
+
+            blessed refaddr reftype weaken unweaken isweak
+            readonly set_prototype dualvar isdual isvstring
+            looks_like_number openhandle tainted
+
+            decode decode_utf8 encode encode_utf8 str2bytes bytes2str
+            encodings find_encoding find_mime_encoding clone_encoding
+        /]);
+
+        return $safe;
+    }
+);
+
 around 'exec' => sub {
     my ($orig, $self, $source_code) = @_;
 
@@ -51,98 +95,79 @@ around 'exec' => sub {
     $self->$orig($code);
 };
 
-{
-    no utf8;
+
     
-    # instance method
-    sub exec {
-        my ($self, $source_code) = @_;
+# instance method
+sub exec {
+    my ($self, $source_code) = @_;
 
-        pipe my ($read, $write);
+    pipe my ($read, $write);
 
-        my $pid = fork;
-        defined $pid or croak 'Could not fork()';
+    my $pid = fork;
+    defined $pid or croak 'Could not fork()';
 
-        my $timeout = 4;
+    my $timeout = 4;
 
-        my ($result, $timed_out);
-        if ($pid) {
-            close $write;
+    my ($result, $timed_out);
+    if ($pid) {
+        close $write;
 
-            local $SIG{ALRM} = sub {
-                $timed_out = 1;
-                kill 15, -$pid;
-                alarm 0;
-            };
-
-            alarm $timeout;
-            
-            wait;
-
+        local $SIG{ALRM} = sub {
+            $timed_out = 1;
+            kill 15, -$pid;
             alarm 0;
-        } else {
-            POSIX::setpgid($$, $$);
-            _setrlimit();
-            close $read;
+        };
 
-            open STDOUT, '>&', $write;
-            open STDERR, '>&', STDOUT;
+        alarm $timeout;
+        
+        wait;
 
-            my ($error, $res);
-            {
-                local $@;
-                $res = $self->_execute_code($source_code) // 'undef';
-                $error = $@;
-            }
-            
-            if ($error) {
-                chomp $error;
-                print "Catching exception:\n```$error```";
-            }
-            print "\nresponse code: `$res`";
-            exit;
+        alarm 0;
+    } else {
+        POSIX::setpgid($$, $$);
+        _setrlimit();
+        close $read;
+
+        open STDOUT, '>&', $write;
+        open STDERR, '>&', STDOUT;
+
+        my ($error, $res);
+        {
+            local $@;
+            $res = $self->_execute_code($source_code) // 'undef';
+            $error = $@;
         }
-
-        if ($timed_out) {
-            return "Timeout: `Interrupting, taking more than $timeout seconds`";
+        
+        if ($error) {
+            chomp $error;
+            print "Catching exception:\n```$error```";
         }
-
-        return do { local $/; <$read> };
+        print "\nresponse code: `$res`";
+        exit;
     }
 
-    sub _execute_code {
-        my ($self, $code) = @_;
-        my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
-        # set limit
-        my $safe = Safe->new;
-        $safe->permit_only(qw/
-            print say eof :base_core :base_loop
-            :base_mem :base_orig :base_math
-            sort sleep :load utime ftatime ftctime time tms
-            read :filesys_read pack unpack
-        /);
-        $safe->share_from('main', [qw/
-            Internals::SvREADONLY
-            mro::method_changed_in
-            mro::get_linear_isa
-            mro::get_pkg_gen mro::set_mro
-            mro::method_changed_in mro::get_mro
-            mro::invalidate_all_method_caches
-            mro::is_universal mro::get_isarev
-        /]);
-        my $res = $safe->reval(qq{
-            use strict;
-            use warnings;
-            use utf8;
-            use feature ':5.22';
-
-            sub $rand {
-                $code;
-            }
-            $rand();
-        });
-        return $res;
+    if ($timed_out) {
+        return "Timeout: `Interrupting, taking more than $timeout seconds`";
     }
+
+    return do { local $/; <$read> };
+}
+
+sub _execute_code {
+    my ($self, $code) = @_;
+    my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
+    my $res = $self->safe->reval(qq{
+        use strict;
+        use warnings;
+        use utf8;
+        use feature ':5.22';
+
+        sub $rand {
+            $code;
+        }
+        $rand();
+    });
+    return $res;
 }
 
 __PACKAGE__->meta->make_immutable();
