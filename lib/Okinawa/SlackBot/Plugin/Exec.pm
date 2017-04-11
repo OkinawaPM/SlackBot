@@ -1,6 +1,11 @@
 package Okinawa::SlackBot::Plugin::Exec;
 
-use Okinawa::Base -base;
+use strict;
+use warnings;
+use utf8;
+use feature ':5.22';
+
+use Mouse;
 use Okinawa::SlackBot::Plugin;
 
 plugin exec => short 'Run your code using Safe->reval';
@@ -46,82 +51,98 @@ around 'exec' => sub {
     $self->$orig($code);
 };
 
-# instance method
-sub exec {
-    my ($self, $source_code) = @_;
+{
+    no utf8;
+    
+    # instance method
+    sub exec {
+        my ($self, $source_code) = @_;
 
-    pipe my ($read, $write);
+        pipe my ($read, $write);
 
-    my $pid = fork;
-    defined $pid or croak 'Could not fork()';
+        my $pid = fork;
+        defined $pid or croak 'Could not fork()';
 
-    my $timeout = 4;
+        my $timeout = 4;
 
-    my ($result, $timed_out);
-    if ($pid) {
-        close $write;
+        my ($result, $timed_out);
+        if ($pid) {
+            close $write;
 
-        local $SIG{ALRM} = sub {
-            $timed_out = 1;
-            kill 15, -$pid;
+            local $SIG{ALRM} = sub {
+                $timed_out = 1;
+                kill 15, -$pid;
+                alarm 0;
+            };
+
+            alarm $timeout;
+            
+            wait;
+
             alarm 0;
-        };
+        } else {
+            POSIX::setpgid($$, $$);
+            _setrlimit();
+            close $read;
 
-        alarm $timeout;
-        
-        wait;
+            open STDOUT, '>&', $write;
+            open STDERR, '>&', STDOUT;
 
-        alarm 0;
-    } else {
-        POSIX::setpgid($$, $$);
-        _setrlimit();
-        close $read;
-
-        open STDOUT, '>&', $write;
-        open STDERR, '>&', STDOUT;
-
-        my ($error, $res);
-        {
-            local $@;
-            $res = $self->_execute_code($source_code) // 'undef';
-            $error = $@;
+            my ($error, $res);
+            {
+                local $@;
+                $res = $self->_execute_code($source_code) // 'undef';
+                $error = $@;
+            }
+            
+            if ($error) {
+                chomp $error;
+                print "Catching exception:\n```$error```";
+            }
+            print "\nresponse code: `$res`";
+            exit;
         }
-        
-        if ($error) {
-            chomp $error;
-            print "Catching exception:\n```$error```";
+
+        if ($timed_out) {
+            return "Timeout: `Interrupting, taking more than $timeout seconds`";
         }
-        print "\nresponse code: `$res`";
-        exit;
+
+        return do { local $/; <$read> };
     }
 
-    if ($timed_out) {
-        return "Timeout: `Interrupting, taking more than $timeout seconds`";
+    sub _execute_code {
+        my ($self, $code) = @_;
+        my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
+        # set limit
+        my $safe = Safe->new;
+        $safe->permit_only(qw/
+            print say eof :base_core :base_loop
+            :base_mem :base_orig :base_math
+            sort sleep :load utime ftatime ftctime time tms
+            read :filesys_read pack unpack
+        /);
+        $safe->share_from('main', [qw/
+            Internals::SvREADONLY
+            mro::method_changed_in
+            mro::get_linear_isa
+            mro::get_pkg_gen mro::set_mro
+            mro::method_changed_in mro::get_mro
+            mro::invalidate_all_method_caches
+            mro::is_universal mro::get_isarev
+        /]);
+        my $res = $safe->reval(qq{
+            use strict;
+            use warnings;
+            use utf8;
+            use feature ':5.22';
+
+            sub $rand {
+                $code;
+            }
+            $rand();
+        });
+        return $res;
     }
-
-    return do { local $/; <$read> };
-}
-
-sub _execute_code {
-    my ($self, $code) = @_;
-    my $rand = String::Random->new->randregex('[a-zA-Z]{16}');
-    # set limit
-    my $safe = Safe->new;
-    $safe->permit_only(qw/
-        print say eof :base_core :base_loop
-        :base_mem :base_orig :base_math
-        sort sleep :load
-    /);
-    my $res = $safe->reval(qq{
-        use Mojo::Base -base;
-        use Encode;
-        
-        sub $rand {
-            $code;
-        }
-        $rand();
-    });
-    return $res;
 }
 
 __PACKAGE__->meta->make_immutable();
