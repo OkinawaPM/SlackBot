@@ -17,14 +17,8 @@ use String::Random;
 use Carp qw/croak confess/;
 
 # module load in reval
-use Encode;
-use Data::Dumper;
-
-use Scalar::Util qw(
-    blessed refaddr reftype weaken unweaken isweak
-    readonly set_prototype dualvar isdual isvstring
-    looks_like_number openhandle tainted
-);
+use Data::Dumper ();
+use Scalar::Util ();
 
 has safe => (
     is      => 'ro',
@@ -46,14 +40,15 @@ has safe => (
             mro::invalidate_all_method_caches
             mro::is_universal mro::get_isarev
 
-            Dumper
+            Data::Dumper::Dumper
 
-            blessed refaddr reftype weaken unweaken isweak
-            readonly set_prototype dualvar isdual isvstring
-            looks_like_number openhandle tainted
-
-            decode decode_utf8 encode encode_utf8 str2bytes bytes2str
-            encodings find_encoding find_mime_encoding clone_encoding
+            Scalar::Util::blessed Scalar::Util::refaddr
+            Scalar::Util::reftype Scalar::Util::weaken
+            Scalar::Util::unweaken Scalar::Util::isweak
+            Scalar::Util::readonly Scalar::Util::set_prototype
+            Scalar::Util::dualvar Scalar::Util::isdual 
+            Scalar::Util::isvstring Scalar::Util::looks_like_number
+            Scalar::Util::openhandle Scalar::Util::tainted
         /]);
 
         return $safe;
