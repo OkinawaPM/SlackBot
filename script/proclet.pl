@@ -133,7 +133,7 @@ span {
 </style>
 <script>
 $(function(){
-  $('.submit').on('click', function(ev) {
+  $('.submit').on('submit', function(ev) {
     $('form input, button').prop('disabled', true);
     $.ajax({
       url: '/invite',
@@ -158,7 +158,7 @@ $(function(){
 </script>
 <meta property="og:title" content="okinawapm" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://turtle.gq/slack_form" />
+<meta property="og:url" content="https://okinawapm-slackbot.herokuapp.com" />
 <meta property="og:site_name" content="Okinawa.pm slack invite page" />
 <meta property="og:description" content="okinawapm.slack.comについての説明と自動登録フォーム" />
 </head>
@@ -184,7 +184,7 @@ $(function(){
         </div>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
-            <button type="button" class="submit btn btn-primary">Invite Me</button>
+            <button type="submit" class="submit btn btn-primary">Invite Me</button>
           </div>
         </div>
       </form>
